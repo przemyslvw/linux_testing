@@ -21,7 +21,7 @@ while True:
 
     print(emotions["EXCITED"])  # Wyświetl komunikat "EXCITED"
     print("Rozpoczynam przechwytywanie pakietów...")
-    capture_file = f"capture-{capture_count:02d}"
+    capture_file = f"cap/capture-{capture_count:02d}"
     airodump_process = run_airodump("wlan0", capture_file)
     time.sleep(60)  # Przechwytuj pakiety przez 60 sekund
     airodump_process.kill()  # Zakończ przechwytywanie pakietów
