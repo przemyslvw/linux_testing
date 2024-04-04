@@ -1,4 +1,5 @@
 import subprocess
+import re
 
 # zwraca wartość interfejsu sieciowego
 def get_network_interface():
@@ -28,6 +29,30 @@ def run_vulnerability_scan(ip):
         print(f"Vulnerability scan of {ip} failed.")
         print("Error:")
         print(e.stderr)
+
+def further_investigation(results):
+    # Wyszukaj otwarte porty
+    open_ports = re.findall(r"(\d{1,5})/tcp\s+open", results)
+    print(f"Otwarte porty: {open_ports}")
+
+    # Wyszukaj potencjalne podatności
+    vulnerabilities = re.findall(r"VULNERABLE:\n\s+(.*?)\n", results, re.DOTALL)
+    for vulnerability in vulnerabilities:
+        print(f"Potencjalna podatność: {vulnerability}")
+
+    # Wyszukaj błędy skryptów
+    script_errors = re.findall(r"ERROR: Script execution failed", results)
+    if script_errors:
+        print(f"Liczba błędów skryptów: {len(script_errors)}")
+
+    # Wyszukaj informacje o urządzeniu
+    device_info = re.findall(r"MAC Address: (.*?) \((.*?)\)", results)
+    if device_info:
+        print(f"Informacje o urządzeniu: {device_info}")
+
+    # Jeśli nie znaleziono otwartych portów, potencjalnych podatności ani błędów skryptów, zwróć informację
+    if not open_ports and not vulnerabilities and not script_errors:
+        print("Nie znaleziono otwartych portów, potencjalnych podatności ani błędów skryptów.")
 
 # ta funkcja skanuje hosta na podstawie określonego adresu IP
 def run_detailed_nmap_scan(ip):
@@ -93,4 +118,8 @@ def run_nmap_scan(ip_range):
 
 # results = run_detailed_nmap_scan("192.168.0.164")
 # check_scan_results_for_string(results, "OpenSSH")
-run_vulnerability_scan("192.168.0.164")
+# run_vulnerability_scan("192.168.0.164")
+
+results = run_vulnerability_scan("192.168.0.12")
+
+further_investigation(results)
