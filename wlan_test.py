@@ -16,19 +16,21 @@ def get_network_interface():
     #     print(e.stderr)
 
 #  skanowanie na podatności
-def run_vulnerability_scan(ip):
-    print(f"Running vulnerability scan on host: {ip}")
-    command = ["nmap", "-v", "--script=vuln", ip]
+def run_vulnerability_scan(target):
+    # print(f"Running vulnerability scan on host: {ip}")
+    # command = ["nmap", "-v", "--script=vuln", ip]
 
     try:
-        result = subprocess.run(command, capture_output=True, text=True, check=True)
-        print(f"Vulnerability scan of {ip} completed successfully.")
+        result = subprocess.run(["nmap", "-sV", "--script=vuln", target], capture_output=True, text=True, check=True)
+        print("Vulnerability scan of " + target + " completed successfully.")
         print("Output:")
         print(result.stdout)
+        return result.stdout
     except subprocess.CalledProcessError as e:
-        print(f"Vulnerability scan of {ip} failed.")
+        print("Vulnerability scan failed.")
         print("Error:")
         print(e.stderr)
+        return None
 
 def further_investigation(results):
     # Wyszukaj otwarte porty
